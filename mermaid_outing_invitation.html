@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Little Secret for You 🧜🏽‍♀️</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Georgia,serif;color:#fff}
+body{
+  overflow-x:hidden;
+  background:linear-gradient(180deg,#03152e 0%,#063b61 48%,#021b35 100%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+}
+.ocean{position:fixed;inset:0;overflow:hidden;pointer-events:none}
+.glow{position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(77,224,255,.14);filter:blur(35px);top:-130px;left:50%;transform:translateX(-50%)}
+.bubble{position:absolute;bottom:-80px;border:1px solid rgba(255,255,255,.45);border-radius:50%;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-115vh) translateX(35px);opacity:0}}
+.sway{position:absolute;bottom:-20px;width:80px;height:180px;border-radius:60% 40% 0 0;background:rgba(20,116,108,.35);transform-origin:bottom;animation:sway 4s ease-in-out infinite alternate}
+@keyframes sway{to{transform:rotate(8deg)}}
+.card{
+ position:relative;width:min(92%,520px);padding:38px 28px 30px;
+ border:1px solid rgba(255,255,255,.25);border-radius:30px;
+ background:rgba(2,20,42,.72);backdrop-filter:blur(14px);
+ box-shadow:0 20px 80px rgba(0,0,0,.45);text-align:center;
+ animation:appear 1.1s ease both;
+}
+@keyframes appear{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}
+.emoji{font-size:55px;filter:drop-shadow(0 0 16px rgba(99,232,255,.7));animation:float 3s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+h1{font-size:clamp(30px,7vw,46px);margin:12px 0 8px;letter-spacing:.5px}
+.subtitle{font-size:17px;line-height:1.6;color:#d9f8ff;margin:0 auto 24px;max-width:430px}
+.secret{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#8deaff}
+label{display:block;text-align:left;margin:15px 0 7px;color:#d9f8ff;font-size:14px}
+input{
+ width:100%;padding:15px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.25);
+ background:rgba(255,255,255,.09);color:white;font-size:16px;outline:none;
+}
+input:focus{border-color:#7beaff;box-shadow:0 0 0 3px rgba(123,234,255,.12)}
+button{
+ width:100%;margin-top:22px;padding:16px;border:0;border-radius:16px;
+ background:linear-gradient(90deg,#4de0ff,#8c9eff);color:#03152e;
+ font-weight:bold;font-size:17px;cursor:pointer;box-shadow:0 8px 25px rgba(77,224,255,.25);
+ transition:.2s;
+}
+button:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(77,224,255,.4)}
+.note{font-size:12px;color:#a9dce8;margin-top:14px}
+.success{display:none;animation:appear .8s ease both}
+.success h2{font-size:34px;margin:12px 0}
+.answer{margin:20px 0;padding:18px;border-radius:18px;background:rgba(255,255,255,.08);line-height:1.8}
+.heart{font-size:32px;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{transform:scale(1.18)}}
+.small{font-size:13px;color:#bcecf4}
+</style>
+</head>
+<body>
+<div class="ocean">
+ <div class="glow"></div>
+ <div class="sway" style="left:5%;height:160px"></div>
+ <div class="sway" style="left:18%;height:220px;animation-delay:-1s"></div>
+ <div class="sway" style="right:14%;height:190px;animation-delay:-2s"></div>
+ <div class="sway" style="right:3%;height:140px;animation-delay:-.5s"></div>
+</div>
+
+<div class="card">
+ <div id="formView">
+   <div class="emoji">🧜🏽‍♀️</div>
+   <div class="secret">A little secret for you</div>
+   <h1>Will You Join Me?</h1>
+   <p class="subtitle">
+     I have a little outing in mind for a very special mermaid.
+     The destination is my secret… but I need <i>your</i> choice first. ✨
+   </p>
+
+   <form id="dateForm">
+     <label for="name">What should I call you? 💙</label>
+     <input id="name" type="text" placeholder="Your name" required>
+
+     <label for="day">Which day would you like to go? 🌙</label>
+     <input id="day" type="date" required>
+
+     <label for="time">And what time feels perfect? ⏰</label>
+     <input id="time" type="time" required>
+
+     <button type="submit">✨ Reveal My Answer ✨</button>
+   </form>
+   <div class="note">The venue is intentionally hidden… that's my surprise. 🤫</div>
+ </div>
+
+ <div id="success" class="success">
+   <div class="heart">💙</div>
+   <h2>It's a Date, <span id="person"></span>!</h2>
+   <p class="subtitle">Your choices have been safely captured.</p>
+   <div class="answer">
+     <div>📅 <b id="dateText"></b></div>
+     <div>⏰ <b id="timeText"></b></div>
+     <div>🌊 Venue: <b>Secret for now…</b></div>
+   </div>
+   <p class="small">A certain someone will reveal the destination when the time is right. 😉</p>
+ </div>
+</div>
+
+<script>
+const form=document.getElementById('dateForm');
+const day=document.getElementById('day');
+const now=new Date(); now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
+day.min=now.toISOString().slice(0,10);
+
+function makeBubbles(){
+ for(let i=0;i<22;i++){
+  const b=document.createElement('span'); b.className='bubble';
+  const s=8+Math.random()*28;
+  b.style.width=s+'px';b.style.height=s+'px';
+  b.style.left=Math.random()*100+'%';
+  b.style.animationDuration=(7+Math.random()*9)+'s';
+  b.style.animationDelay=(-Math.random()*12)+'s';
+  document.querySelector('.ocean').appendChild(b);
+ }
+}
+makeBubbles();
+
+form.addEventListener('submit',e=>{
+ e.preventDefault();
+ const name=document.getElementById('name').value.trim();
+ const date=new Date(day.value+'T00:00:00');
+ const dateText=date.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+ let [h,m]=document.getElementById('time').value.split(':');
+ let ap=h>=12?'PM':'AM'; h=h%12||12;
+ document.getElementById('person').textContent=name;
+ document.getElementById('dateText').textContent=dateText;
+ document.getElementById('timeText').textContent=`${h}:${m} ${ap}`;
+ document.getElementById('formView').style.display='none';
+ document.getElementById('success').style.display='block';
+ window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>
